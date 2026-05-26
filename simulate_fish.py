@@ -64,6 +64,8 @@ RIVER_DEPART = 54   # tick 54 = 3:00 PM  (WR was 3:10; simplified 1 tick)
 TARGET_FISH = frozenset({"Sardine", "Red_Snapper", "Tilapia", "Eel",
                           "Shad", "Catfish", "Tiger_Trout", "Walleye"})
 
+RIVER_TARGETS = frozenset({"Shad", "Catfish", "Tiger_Trout", "Walleye"})
+
 # Format: (name, depth_adjusted_baseRate, [(window_start_tick, window_end_tick)])
 # Weight formula (GameLocation.cs lines 13950-13961):
 #   dropOff = depthMultiplier × baseRate
@@ -312,8 +314,10 @@ def _sim_fish_day(strategy: str, perfect_threshold: int = 50,
     natural_level = 0
     got_fiber     = False
     levelup_tick  = None
-    finish_tick   = None
-    minigame_secs = 0.0
+    finish_tick       = None
+    non_eel_done_tick = None
+    river_done_tick   = None
+    minigame_secs     = 0.0
 
     PHASES = ("beach_am", "beach_ext", "river_bamboo", "river_fiber", "ocean_pm")
     pc = {ph: {"casts": 0, "minigames": 0, "perfect": 0} for ph in PHASES}
@@ -348,7 +352,7 @@ def _sim_fish_day(strategy: str, perfect_threshold: int = 50,
                  cast_distance: int = CAST_DISTANCE) -> tuple:
         """Process one catch. Returns (quality, xp_gained); quality=-1 for junk.
         Does NOT log — callers log level-up / all-caught after the cast line."""
-        nonlocal xp, natural_level, got_fiber, levelup_tick, finish_tick
+        nonlocal xp, natural_level, got_fiber, levelup_tick, finish_tick, non_eel_done_tick, river_done_tick
 
         if name in JUNK_ITEMS:
             xp    += JUNK_XP
@@ -365,6 +369,10 @@ def _sim_fish_day(strategy: str, perfect_threshold: int = 50,
             uncaught.discard(name)
             if not uncaught:
                 finish_tick = tick
+            if non_eel_done_tick is None and not (uncaught - {"Eel"}):
+                non_eel_done_tick = tick
+            if river_done_tick is None and not (uncaught & RIVER_TARGETS):
+                river_done_tick = tick
 
         diff = FISH_DIFFICULTY.get(name, 0)
         if diff <= 0:
@@ -552,19 +560,28 @@ def _sim_fish_day(strategy: str, perfect_threshold: int = 50,
         _log(f"[2AM] Run failed. Missing: {', '.join(m.replace('_', ' ') for m in missing)}")
 
     return {
-        "caught":        caught,
-        "got_fiber":     got_fiber,
-        "levelup_tick":  levelup_tick,
-        "xp":            xp,
-        "minigame_secs": minigame_secs,
-        "finish_tick":   finish_tick,
-        "phase_stats":   pc,
+        "caught":            caught,
+        "got_fiber":         got_fiber,
+        "levelup_tick":      levelup_tick,
+        "xp":                xp,
+        "minigame_secs":     minigame_secs,
+        "finish_tick":       finish_tick,
+        "non_eel_done_tick": non_eel_done_tick,
+        "river_done_tick":   river_done_tick,
+        "phase_stats":       pc,
     }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
 # RUNNER
 # ══════════════════════════════════════════════════════════════════════════════
+
+# Milestone ticks for completion-time histograms.
+# River: earliest completion ~12PM (Walleye window opens); shown hourly 11AM–3PM.
+# Non-Eel: Sardine/Snapper mop-up ends at 7PM in ocean PM; shown 12PM–7PM.
+RIVER_HIST_TICKS   = [TICK_11AM, TICK_12PM, 42, TICK_2PM, RIVER_DEPART]   # 11AM–3PM
+NON_EEL_HIST_TICKS = [TICK_12PM, 42, TICK_2PM, TICK_4PM, TICK_6PM, TICK_7PM]  # 12PM–7PM
+
 
 def run_simulation(n: int = 100_000, perfect_threshold: int = 50) -> dict:
     _PHASES = ("beach_am", "beach_ext", "river_bamboo", "river_fiber", "ocean_pm")
@@ -576,7 +593,11 @@ def run_simulation(n: int = 100_000, perfect_threshold: int = 50) -> dict:
         levelup_ticks       = []
         finish_ticks        = []
         total_minigame_secs = 0.0
-        phase_totals = {ph: {"casts": 0, "minigames": 0, "perfect": 0} for ph in _PHASES}
+        phase_totals     = {ph: {"casts": 0, "minigames": 0, "perfect": 0} for ph in _PHASES}
+        non_eel_ticks    = []
+        river_done_ticks = []
+        river_hist       = [0] * len(RIVER_HIST_TICKS)
+        non_eel_hist     = [0] * len(NON_EEL_HIST_TICKS)
 
         for _ in range(n):
             r      = _sim_fish_day(strategy, perfect_threshold)
@@ -600,22 +621,41 @@ def run_simulation(n: int = 100_000, perfect_threshold: int = 50) -> dict:
                 for k in ("casts", "minigames", "perfect"):
                     phase_totals[ph][k] += r["phase_stats"][ph][k]
 
-        avg_levelup = (sum(levelup_ticks) / len(levelup_ticks)) if levelup_ticks else None
-        avg_finish  = (sum(finish_ticks)  / len(finish_ticks))  if finish_ticks  else None
-        phase_avgs  = {ph: {k: v / n for k, v in ctr.items()}
-                       for ph, ctr in phase_totals.items()}
+            rdt = r["river_done_tick"]
+            net = r["non_eel_done_tick"]
+            if rdt is not None:
+                river_done_ticks.append(rdt)
+                for i, t in enumerate(RIVER_HIST_TICKS):
+                    if rdt <= t:
+                        river_hist[i] += 1
+            if net is not None:
+                non_eel_ticks.append(net)
+                for i, t in enumerate(NON_EEL_HIST_TICKS):
+                    if net <= t:
+                        non_eel_hist[i] += 1
+
+        avg_levelup    = (sum(levelup_ticks)    / len(levelup_ticks))    if levelup_ticks    else None
+        avg_finish     = (sum(finish_ticks)     / len(finish_ticks))     if finish_ticks     else None
+        avg_river_done = (sum(river_done_ticks) / len(river_done_ticks)) if river_done_ticks else None
+        avg_non_eel    = (sum(non_eel_ticks)    / len(non_eel_ticks))    if non_eel_ticks    else None
+        phase_avgs     = {ph: {k: v / n for k, v in ctr.items()}
+                          for ph, ctr in phase_totals.items()}
 
         results[strategy] = {
-            "count_all":         count_all,
-            "sole_miss":         sole_miss,
-            "fiber_pct":         fiber_count / n,
-            "avg_levelup":       avg_levelup,
-            "avg_finish":        avg_finish,
-            "avg_minigame_secs": total_minigame_secs / n,
+            "count_all":           count_all,
+            "sole_miss":           sole_miss,
+            "fiber_pct":           fiber_count / n,
+            "avg_levelup":         avg_levelup,
+            "avg_finish":          avg_finish,
+            "avg_river_done_tick": avg_river_done,
+            "avg_non_eel_tick":    avg_non_eel,
+            "river_hist":          {t: c / n for t, c in zip(RIVER_HIST_TICKS, river_hist)},
+            "non_eel_hist":        {t: c / n for t, c in zip(NON_EEL_HIST_TICKS, non_eel_hist)},
+            "avg_minigame_secs":   total_minigame_secs / n,
             # kept for backward compat with writeup text
-            "avg_river_bamboo":  phase_avgs["river_bamboo"]["casts"],
-            "avg_river_fiber":   phase_avgs["river_fiber"]["casts"],
-            "phase_avgs":        phase_avgs,
+            "avg_river_bamboo":    phase_avgs["river_bamboo"]["casts"],
+            "avg_river_fiber":     phase_avgs["river_fiber"]["casts"],
+            "phase_avgs":          phase_avgs,
         }
 
     results["n"] = n
@@ -716,6 +756,59 @@ def _phase_tables(stats: dict) -> str:
         "Fraction of minigames that were perfect catches (difficulty ≤ 50):\n\n"
         + "\n".join(rows2)
     )
+
+
+def _completion_hist_section(stats: dict) -> str:
+    """Return markdown section with river-targets and non-Eel completion time histograms."""
+    strats = [("rush_beach", "Rush at beach"), ("catch_all", "Rush lvl 2"), ("skip", "Skip")]
+
+    def avg_t(sk, key):
+        t = stats[sk].get(key)
+        return _tick_to_time(t) if t is not None else "n/a"
+
+    def pct(v): return f"{v:.0%}"
+
+    header = "| Time | " + " | ".join(lbl for _, lbl in strats) + " |"
+    sep    = "|---|" + "---|" * len(strats)
+
+    lines = ["## Completion Time Analysis", ""]
+
+    lines += [
+        "**River targets** (Shad, Catfish, Tiger Trout, Walleye) — cumulative % of all runs",
+        "where all four were caught by each time:",
+        "",
+        header, sep,
+    ]
+    for t in RIVER_HIST_TICKS:
+        label = _tick_to_time(t) + (" (depart)" if t == RIVER_DEPART else "")
+        cells = " | ".join(pct(stats[sk]["river_hist"].get(t, 0.0)) for sk, _ in strats)
+        lines.append(f"| {label} | {cells} |")
+    avgs = " | ".join(avg_t(sk, "avg_river_done_tick") for sk, _ in strats)
+    lines.append(f"| **Avg (done runs)** | {avgs} |")
+
+    lines += [""]
+
+    lines += [
+        "**All non-Eel targets** (7 fish: all except Eel) — cumulative % of all runs",
+        "where all seven were caught by each time:",
+        "",
+        header, sep,
+    ]
+    for t in NON_EEL_HIST_TICKS:
+        label = _tick_to_time(t) + (" (depart)" if t == RIVER_DEPART else "")
+        cells = " | ".join(pct(stats[sk]["non_eel_hist"].get(t, 0.0)) for sk, _ in strats)
+        lines.append(f"| {label} | {cells} |")
+    avgs = " | ".join(avg_t(sk, "avg_non_eel_tick") for sk, _ in strats)
+    lines.append(f"| **Avg (done runs)** | {avgs} |")
+
+    lines += [
+        "",
+        "Non-Eel totals step up after 4PM: Sardine and Red Snapper can be caught during",
+        "the beach PM mop-up phase (4PM–7PM) if missed earlier.",
+        "**Avg (done runs)** is conditional on that set being completed (excludes failed runs).",
+    ]
+
+    return "\n".join(lines)
 
 
 def generate_writeup(stats: dict) -> str:
@@ -839,6 +932,10 @@ def generate_writeup(stats: dict) -> str:
 
     lines += [
         "```",
+        "",
+        "---",
+        "",
+        _completion_hist_section(stats),
         "",
         "---",
         "",
@@ -1004,6 +1101,11 @@ def generate_writeup(stats: dict) -> str:
         "",
         "- **Fishing bubbles.** Halve bite time. Not modelled; makes simulation slightly pessimistic.",
         "- **No escapes.** Assumes the runner clears the minigame on every cast.",
+        "- **Constant river cast depth.** The simulation fishes at depth 3 throughout the river",
+        "  phase. Experienced runners adjust depth mid-session: shallow casting (depth 1–2) once",
+        "  short-window fish are caught suppresses them and raises the relative odds of remaining",
+        "  targets. The current model may slightly understate success probability for runners who",
+        "  apply this technique.",
     ]
 
     return "\n".join(lines)

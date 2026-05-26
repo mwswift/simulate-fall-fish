@@ -4,9 +4,9 @@ P(all 8 fish caught) on a single rainy Fall day attempt.
 
 | Strategy              | Perfect ≤50   | Perfect ≤30   | No perfect    |
 |-----------------------|---------------|---------------|---------------|
-| Rush lvl 2 at beach   | **71.1%**     | **45.6%**     | **2.9%**      |
-| Rush lvl 2            | **65.4%**     | **43.5%**     | **31.7%**     |
-| Skip non-targets      | **36.6%**     | **36.5%**     | **36.0%**     |
+| Rush lvl 2 at beach   | **71.0%**     | **45.2%**     | **3.0%**      |
+| Rush lvl 2            | **65.4%**     | **43.1%**     | **31.7%**     |
+| Skip non-targets      | **36.5%**     | **36.6%**     | **36.3%**     |
 
 Average finish time (successful runs only) and real-world minigame time per day:
   Perfect catch: 6.5s/fish | Non-perfect: 7.2s/fish | Skip identify: 0.5s
@@ -40,18 +40,18 @@ Three strategies, all catching non-selectively pre-Lv2 for max XP:
 **Rush lvl 2 at beach** — Fish non-selectively at the beach until Tilapia AND Lv2 are
 both achieved, buying the Fiberglass Rod for free on the way out. River fishing starts
 with fiber rod already in hand: avg 16 fiber casts at river,
-0 bamboo casts. P(all 8 fish) = **71.1%**.
+0 bamboo casts. P(all 8 fish) = **71.0%**.
 
 **Rush lvl 2** — Same aggressive beach fishing, but departs for the river as soon as
 Tilapia is caught, using the bamboo rod until levelling up mid-river. The Willy round
 trip eats into fiber-rod time: avg 3 bamboo + 12 fiber casts at river.
-P(all 8 fish) = **65.4%** (–5.8% vs rush at beach).
+P(all 8 fish) = **65.4%** (–5.7% vs rush at beach).
 
 **Skip non-targets** — Cast only for target fish throughout; almost never reaches Lv2
 (15.8% of runs) and fishes the Eel phase with the slow bamboo rod.
 Saves ~55s of minigame time per day but Tiger Trout and
 Walleye kill runs at similar rates to the rush strategies.
-P(all 8 fish) = **36.6%** (–34.6% vs rush at beach).
+P(all 8 fish) = **36.5%** (–34.6% vs rush at beach).
 
 **Perfect catches matter for the XP model.** The ×2.4 XP multiplier on fish with
 difficulty ≤ 50 (Tilapia, Shad, Walleye, etc.) is what makes Lv2 achievable at the
@@ -61,7 +61,7 @@ in the comparison table above.
 
 **Strategic considerations:**
 - Run pacing well → prefer **rush lvl 2 at beach**: the risk-averse play that locks in
-  a 71.1% success rate at a cost of only ~44s extra
+  a 71.0% success rate at a cost of only ~44s extra
   minigame time per day compared to skipping.
 - Run pacing poorly → consider **skip non-targets**: save ~40s per reset to make more
   attempts, accepting the lower per-day probability.
@@ -72,9 +72,9 @@ in the comparison table above.
 
 | Strategy | P(all 8 fish) | Got Fiberglass | Minigame s/day | Avg level-up |
 |---|---|---|---|---|
-| Rush lvl 2 at beach | **71.1%** | 100.0% | 98s | 10:10AM |
+| Rush lvl 2 at beach | **71.0%** | 100.0% | 98s | 10:10AM |
 | Rush lvl 2 | **65.4%** | 100.0% | 93s | 10:40AM |
-| Skip non-targets | **36.6%** | 15.8% | 55s | 5:40PM |
+| Skip non-targets | **36.5%** | 15.8% | 55s | 5:40PM |
 
 ---
 
@@ -86,20 +86,20 @@ Days where that fish was the sole reason the run failed:
 ```
   Tiger Trout       12.7%     █████
   Walleye           4.8%      █
-  Shad              3.3%      █
-  Catfish           3.1%      █
+  Shad              3.4%      █
+  Catfish           3.2%      █
   Red Snapper       0.1%      
-  Tilapia           0.0%      
   Sardine           0.0%      
+  Tilapia           0.0%      
   Eel               0.0%      
 ```
 
 **Rush lvl 2**
 ```
-  Tiger Trout       14.1%     █████
-  Walleye           6.1%      ██
-  Shad              4.0%      █
-  Catfish           3.7%      █
+  Tiger Trout       14.0%     █████
+  Walleye           6.2%      ██
+  Shad              4.1%      █
+  Catfish           3.6%      █
   Red Snapper       0.3%      
   Sardine           0.0%      
   Tilapia           0.0%      
@@ -108,15 +108,48 @@ Days where that fish was the sole reason the run failed:
 
 **Skip non-targets**
 ```
-  Tiger Trout       14.8%     █████
-  Walleye           12.0%     ████
+  Tiger Trout       15.0%     ██████
+  Walleye           12.3%     ████
   Shad              5.1%      ██
-  Catfish           4.7%      █
+  Catfish           4.6%      █
   Red Snapper       1.3%      
   Sardine           0.2%      
-  Tilapia           0.0%      
   Eel               0.0%      
+  Tilapia           0.0%      
 ```
+
+---
+
+## Completion Time Analysis
+
+**River targets** (Shad, Catfish, Tiger Trout, Walleye) — cumulative % of all runs
+where all four were caught by each time:
+
+| Time | Rush at beach | Rush lvl 2 | Skip |
+|---|---|---|---|
+| 11AM | 0% | 0% | 0% |
+| 12PM | 0% | 0% | 0% |
+| 1PM | 22% | 14% | 9% |
+| 2PM | 51% | 42% | 23% |
+| 3PM (depart) | 71% | 66% | 38% |
+| **Avg (done runs)** | 1:20PM | 1:30PM | 1:30PM |
+
+**All non-Eel targets** (7 fish: all except Eel) — cumulative % of all runs
+where all seven were caught by each time:
+
+| Time | Rush at beach | Rush lvl 2 | Skip |
+|---|---|---|---|
+| 12PM | 0% | 0% | 0% |
+| 1PM | 17% | 9% | 5% |
+| 2PM | 41% | 26% | 13% |
+| 4PM | 68% | 59% | 30% |
+| 6PM | 71% | 65% | 35% |
+| 7PM | 71% | 65% | 36% |
+| **Avg (done runs)** | 1:50PM | 2:20PM | 2:30PM |
+
+Non-Eel totals step up after 4PM: Sardine and Red Snapper can be caught during
+the beach PM mop-up phase (4PM–7PM) if missed earlier.
+**Avg (done runs)** is conditional on that set being completed (excludes failed runs).
 
 ---
 
@@ -129,7 +162,7 @@ Average casts per phase per day (including junk; all strategies):
 | Beach 7–9AM | 5.6 | 5.6 | 5.6 |
 | Beach 9AM–2PM | 5.6 | 2.7 | 2.5 |
 | River (bamboo) | — | 3.4 | 12.6 |
-| River (fiberglass) | 16.4 | 12.2 | — |
+| River (fiberglass) | 16.5 | 12.2 | — |
 | Ocean 4PM–2AM | 11.2 | 10.3 | 6.6 |
 | **Total** | **38.9** | **34.2** | **27.3** |
 
@@ -137,8 +170,8 @@ Fraction of minigames that were perfect catches (difficulty ≤ 50):
 
 | Phase | Rush at beach | Rush lvl 2 | Skip |
 |---|---|---|---|
-| Beach 7–9AM | 87% | 88% | 100% |
-| Beach 9AM–2PM | 89% | 89% | 100% |
+| Beach 7–9AM | 88% | 88% | 100% |
+| Beach 9AM–2PM | 88% | 90% | 100% |
 | River (bamboo) | — | 68% | 51% |
 | River (fiberglass) | 51% | 56% | — |
 | Ocean 4PM–2AM | 17% | 30% | 27% |
@@ -307,6 +340,11 @@ if it draws position #1 in the shuffle, regardless of weight.
 
 - **Fishing bubbles.** Halve bite time. Not modelled; makes simulation slightly pessimistic.
 - **No escapes.** Assumes the runner clears the minigame on every cast.
+- **Constant river cast depth.** The simulation fishes at depth 3 throughout the river
+  phase. Experienced runners adjust depth mid-session: shallow casting (depth 1–2) once
+  short-window fish are caught suppresses them and raises the relative odds of remaining
+  targets. The current model may slightly understate success probability for runners who
+  apply this technique.
 
 ---
 
