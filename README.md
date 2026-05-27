@@ -22,6 +22,24 @@ I simulated 100,000 fall fish days with three strategies: rush level 2 at the be
 
 The code is `simulate_fish.py` and more details of the results can be found in `fish_day_analysis.md`.
 
+## Completion Time Analysis
+
+Very good luck on Fall Fish days is quite useful, because it allows an early try at lake fish and an early CC turn-in.  To get a sense of how often this ocurrs, we see how many runs complete the river fish early.  Rushing lvl 2 at the beach increases these odds as well.  In the three strategies, 22% / 14% / 9% of runs have river targets done by 1PM, allowing a meaningful lake window.
+
+**River targets** (Shad, Catfish, Tiger Trout, Walleye) — cumulative % of all runs
+where all four were caught by each time:
+
+| Time | Rush at beach | Rush lvl 2 | Skip |
+|---|---|---|---|
+| 11AM | 0% | 0% | 0% |
+| 12PM | 0% | 0% | 0% |
+| 1PM | 22% | 14% | 9% |
+| 2PM | 51% | 42% | 23% |
+| 3PM (depart) | 71% | 66% | 38% |
+| **Avg (done runs)** | 1:20PM | 1:30PM | 1:30PM |
+
+
+
 ## Acknowledgments
 
 Thanks to Anthropic Sonnet 4.6 in Claude Code for writing most of the code, and for Dannode36 for the decompiled game source code as found in [StardewValleyDecompiled](https://github.com/Dannode36/StardewValleyDecompiled).
