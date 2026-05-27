@@ -4,16 +4,16 @@ P(all 8 fish caught) on a single rainy Fall day attempt.
 
 | Strategy              | Perfect ≤50   | Perfect ≤30   | No perfect    |
 |-----------------------|---------------|---------------|---------------|
-| Rush lvl 2 at beach   | **71.0%**     | **45.2%**     | **3.0%**      |
-| Rush lvl 2            | **65.4%**     | **43.1%**     | **31.7%**     |
-| Skip non-targets      | **36.5%**     | **36.6%**     | **36.3%**     |
+| Rush lvl 2 at beach   | **71.2%**     | **45.2%**     | **2.9%**      |
+| Rush lvl 2            | **65.3%**     | **43.2%**     | **31.9%**     |
+| Skip non-targets      | **36.4%**     | **36.2%**     | **36.2%**     |
 
 Average finish time (successful runs only) and real-world minigame time per day:
   Perfect catch: 6.5s/fish | Non-perfect: 7.2s/fish | Skip identify: 0.5s
 
 | Strategy (≤50 threshold) | Avg finish    | Minigame s/day | vs Skip       |
 |-----------------------|---------------|---------------|---------------|
-| Rush lvl 2 at beach   | 4:40PM        | 98s           | +44s          |
+| Rush lvl 2 at beach   | 4:40PM        | 99s           | +44s          |
 | Rush lvl 2            | 4:40PM        | 93s           | +38s          |
 | Skip non-targets      | 5:20PM        | 55s           | +0s           |
 
@@ -35,23 +35,24 @@ The Fiberglass Rod requires fishing level 2 and is purchased from Willy, who is 
 beach. Levelling up at the beach costs nothing — Willy's shop is right there. Levelling
 up at the river costs a 60-game-minute round trip (~7 minutes real time).
 
-Three strategies, all catching non-selectively pre-Lv2 for max XP:
+Two strategies catch non-selectively pre-Lv2 for max XP; Skip always fishes
+selectively for targets only:
 
 **Rush lvl 2 at beach** — Fish non-selectively at the beach until Tilapia AND Lv2 are
 both achieved, buying the Fiberglass Rod for free on the way out. River fishing starts
 with fiber rod already in hand: avg 16 fiber casts at river,
-0 bamboo casts. P(all 8 fish) = **71.0%**.
+0 bamboo casts. P(all 8 fish) = **71.2%**.
 
 **Rush lvl 2** — Same aggressive beach fishing, but departs for the river as soon as
 Tilapia is caught, using the bamboo rod until levelling up mid-river. The Willy round
 trip eats into fiber-rod time: avg 3 bamboo + 12 fiber casts at river.
-P(all 8 fish) = **65.4%** (–5.7% vs rush at beach).
+P(all 8 fish) = **65.3%** (–5.9% vs rush at beach).
 
 **Skip non-targets** — Cast only for target fish throughout; almost never reaches Lv2
-(15.8% of runs) and fishes the Eel phase with the slow bamboo rod.
+(15.7% of runs) and fishes the Eel phase with the slow bamboo rod.
 Saves ~55s of minigame time per day but Tiger Trout and
 Walleye kill runs at similar rates to the rush strategies.
-P(all 8 fish) = **36.5%** (–34.6% vs rush at beach).
+P(all 8 fish) = **36.4%** (–34.8% vs rush at beach).
 
 **Perfect catches matter for the XP model.** The ×2.4 XP multiplier on fish with
 difficulty ≤ 50 (Tilapia, Shad, Walleye, etc.) is what makes Lv2 achievable at the
@@ -61,20 +62,20 @@ in the comparison table above.
 
 **Strategic considerations:**
 - Run pacing well → prefer **rush lvl 2 at beach**: the risk-averse play that locks in
-  a 71.0% success rate at a cost of only ~44s extra
+  a 71.2% success rate at a cost of only ~44s extra
   minigame time per day compared to skipping.
 - Run pacing poorly → consider **skip non-targets**: save ~40s per reset to make more
   attempts, accepting the lower per-day probability.
 - **Rush lvl 2** (no beach guarantee) is dominated by rush at beach: same time cost,
-  lower success rate. Only prefer it if you're already Lv2 before Tilapia.
+  lower success rate. There is no scenario where it outperforms rush at beach.
 
 ---
 
 | Strategy | P(all 8 fish) | Got Fiberglass | Minigame s/day | Avg level-up |
 |---|---|---|---|---|
-| Rush lvl 2 at beach | **71.0%** | 100.0% | 98s | 10:10AM |
-| Rush lvl 2 | **65.4%** | 100.0% | 93s | 10:40AM |
-| Skip non-targets | **36.5%** | 15.8% | 55s | 5:40PM |
+| Rush lvl 2 at beach | **71.2%** | 100.0% | 99s | 10:10AM |
+| Rush lvl 2 | **65.3%** | 100.0% | 93s | 10:40AM |
+| Skip non-targets | **36.4%** | 15.7% | 55s | 5:40PM |
 
 ---
 
@@ -84,10 +85,10 @@ Days where that fish was the sole reason the run failed:
 
 **Rush lvl 2 at beach**
 ```
-  Tiger Trout       12.7%     █████
+  Tiger Trout       12.8%     █████
   Walleye           4.8%      █
-  Shad              3.4%      █
-  Catfish           3.2%      █
+  Shad              3.3%      █
+  Catfish           3.1%      █
   Red Snapper       0.1%      
   Sardine           0.0%      
   Tilapia           0.0%      
@@ -96,22 +97,22 @@ Days where that fish was the sole reason the run failed:
 
 **Rush lvl 2**
 ```
-  Tiger Trout       14.0%     █████
+  Tiger Trout       14.1%     █████
   Walleye           6.2%      ██
   Shad              4.1%      █
   Catfish           3.6%      █
-  Red Snapper       0.3%      
+  Red Snapper       0.2%      
   Sardine           0.0%      
-  Tilapia           0.0%      
   Eel               0.0%      
+  Tilapia           0.0%      
 ```
 
 **Skip non-targets**
 ```
-  Tiger Trout       15.0%     ██████
+  Tiger Trout       14.7%     █████
   Walleye           12.3%     ████
-  Shad              5.1%      ██
-  Catfish           4.6%      █
+  Shad              5.0%      ██
+  Catfish           4.7%      █
   Red Snapper       1.3%      
   Sardine           0.2%      
   Eel               0.0%      
@@ -129,7 +130,7 @@ where all four were caught by each time:
 |---|---|---|---|
 | 11AM | 0% | 0% | 0% |
 | 12PM | 0% | 0% | 0% |
-| 1PM | 22% | 14% | 9% |
+| 1PM | 23% | 15% | 10% |
 | 2PM | 51% | 42% | 23% |
 | 3PM (depart) | 71% | 66% | 38% |
 | **Avg (done runs)** | 1:20PM | 1:30PM | 1:30PM |
@@ -215,7 +216,7 @@ One real second ≈ 1.4 in-game minutes. One tick = 10 in-game minutes = 7 real 
 **Phase 3 — Beach, 4PM–2AM** (Fiberglass or Bamboo*, Lv3)
   Targets: Eel (4PM–2AM, rain only); Sardine + Red Snapper until 7PM if missed earlier.
   Rush strategies: Fiberglass in 100.0%/100.0% of runs → avg 7.0s/cast
-  Skip: Fiberglass in 15.8% of runs; Bamboo in remaining → avg 14.1s/cast
+  Skip: Fiberglass in 15.7% of runs; Bamboo in remaining → avg 14.1s/cast
 
   * effective level = natural level + Trout Soup (+1)
 
@@ -237,7 +238,8 @@ All timings from TheHaboo's world record run.
 
 ### Bite Time and Rod Mechanics
 
-Two cast functions fitted to WR observed real-time timestamps (n=14 casts):
+Cast time formula from FishingRod.cs calculateTimeUntilFishingBite; WR timestamp
+analysis (n=14 casts) verified the 0.75 first-cast factor against two models:
 ```
   Bamboo Pole (no bait):   bite = U(0.6, 30−0.25×level) × 0.75
     0.75 first-cast bonus universal (FishingRod.cs line 427; WR n=14 consistent)
@@ -255,15 +257,20 @@ Game clock is frozen during the fishing minigame; only bite wait advances the cl
 ### XP and Level-Up
 
 XP formula (FishingRod.cs doPullFishFromWater lines 1091-1104):
-  base_xp = floor((quality+1)×3 + difficulty/3)   [pre-boost quality]
-  if perfect: xp = base_xp + floor(base_xp × 1.4)   [≈ ×2.4 total]
-  Quality from fishSize = (depth/5) × (Skill+2)/10 × Random/100
-    depth: ocean=5, river=3 | Skill ~ U(even from floor_even(level) to 10)
-    fishSize < 0.33 → normal (0); 0.33–<0.66 → silver (1); ≥0.66 → gold (2)
-  Perfect catch assumed for difficulty ≤ 50. XP uses pre-boost quality.
-  Normal-quality fish (quality=0) do not receive an inventory quality boost on perfect
-  catch (FishingRod.cs lines 1077-1084: boost only if quality >= 1), but still earn ×2.4 XP.
-  Starting XP: 31 from Sunfish (Training Rod → quality always normal).
+```
+  base_xp  =  floor( (quality + 1) × 3  +  difficulty / 3 )   ← pre-boost quality
+  xp       =  floor( base_xp × 2.4 )   if perfect catch
+           =  base_xp                  otherwise
+
+  quality:   fishSize < 0.33 → normal (0);  0.33–<0.66 → silver (1);  ≥0.66 → gold (2)
+  fishSize = (castDist / 5) × ((skill + 2) / 10) × U(0.90, 1.10)
+  skill    ~ U(even values from floor_even(level) to 10)
+             ocean castDist = 5;  river castDist = 3
+```
+Perfect catch: difficulty ≤ threshold (config parameter; default 50). XP uses pre-boost
+quality. Normal-quality (quality=0) fish don't receive an inventory upgrade on a perfect
+catch (FishingRod.cs lines 1077-1084: boost requires quality ≥ 1), but still earn ×2.4 XP.
+Starting XP: 31 from Sunfish at farm pond (Training Rod → always normal quality).
 
 Expected XP per fish by phase (quality distribution from fishSize formula):
 ```
